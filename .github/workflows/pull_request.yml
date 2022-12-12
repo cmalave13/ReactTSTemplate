@@ -1,0 +1,36 @@
+
+name: Node Continuous Integration
+
+on:
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+    test_pull_request:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout branch from repository
+          uses: actions/checkout@v2
+
+        - name: Setup node environment
+          uses: actions/setup-node@v1
+          with:
+            node-version: 16
+
+        - name: Run UI tests
+          run: |
+            cd client
+            yarn install --frozen-lockfile
+            yarn test
+         
+        - name: Code Coverage Report
+          uses: romeovs/lcov-reporter-action@v0.2.11
+          with: 
+            github-token: ${{secrets.CODE_COVERAGE}}
+            lcov-file: ./client/coverage/lcov.info
+            delete-old-comments: true
+          
+
+        
+
